@@ -1,10 +1,10 @@
 puts "Программа 'Идеальный вес'"
 
 print "Сначала введите ваше имя: "
-user_name = gets.chomp.to_i
+user_name = gets.chomp
 
 print "Теперь введите ваш рост в сантиметрах: "
-user_weight = gets.chomp
+user_weight = gets.chomp.to_i
 
 ideal_weight = (user_weight - 110) * 1.15
 if ideal_weight > 0
