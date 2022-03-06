@@ -1,6 +1,11 @@
 answers = ["Да","Нет","Возможно"]
-
 puts answers.sample
+
+# заполнение массива
+Array.new(6){ |index| index + 1 }    #=> [1, 2, 3, 4, 5, 6]
+# работа с массивом
+array = ["a", "b", "c", "d", "e"]
+array[1..-2]                         #=> ["b", "c", "d"]
 
 
 print "Integer please: "
@@ -89,8 +94,53 @@ else
   puts "Sorry, I didn't understand you."
 end
 
-
 #leap_year = true unless year % 4 != 0
+
+class Creature
+  def initialize(name)
+    @name = name
+  end
+  
+  def fight
+    return "Punch to the chops!"
+  end
+end
+
+# Add your code below!
+class Dragon < Creature
+  def fight
+    return "Breathes fire!"
+  end
+end
+
+class Machine
+  @@users = {}
+  
+  def initialize(username, password)
+    @username = username
+    @password = password
+    @@users[username] = password
+    @files = {}
+  end
+  
+  def create(filename)
+    time = Time.now
+    @files[filename] = time
+    puts "#{filename} was created by #{@username} at #{time}."
+  end
+  
+  def Machine.get_users
+    @@users
+  end
+end
+
+my_machine = Machine.new("eric", 01234)
+your_machine = Machine.new("you", 56789)
+
+my_machine.create("groceries.txt")
+your_machine.create("todo.txt")
+
+puts "Users: #{Machine.get_users}"
 
 
 
