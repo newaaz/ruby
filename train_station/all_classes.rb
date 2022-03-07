@@ -1,18 +1,15 @@
 class Station
-
   attr_reader :trains, :name
 
   def initialize(name)
-    @name = name.to_s
+    @name = name
     @trains = []
   end
 
   def add_train(train)
     unless @trains.include?(train)
       @trains << train
-      puts "#{train.title} прибыл на станцию #{name}"
-      # назначаем поезду текущую станцию
-      train.current_station = self
+      puts "#{train.title} прибыл на станцию #{name}"    
     else
       puts "Этот поезд уже на станции"
     end
@@ -38,41 +35,29 @@ class Station
     puts "--- Грузовые поезда ---"
     cargo_train.each { |train| puts train.title }
   end
-
-  # выводим все экземпляры класса Station
-  def self.all
-    ObjectSpace.each_object(self).to_a
-  end
-
 end
 
 class Route
-  attr_reader :points
+  attr_reader :stations
   
-  def initialize(start_point, end_point)
-    # Если таких станций нет - можно выводить ошибку, но пока не знаю как
-    @points = []
-    @points.unshift start_point
-    @points.push end_point
+  def initialize(start_station, end_station)
+    @points = [start_station, end_station]  
   end
 
-  # добавляем станцию. Проверить есть ли такая станция в природе
-  # не должна дублироваться
+  # добавляем станцию. не должна дублироваться
   def add_station(station)
-    if Station.all.include?(station) && !(@points.include?(station))
-      end_point = self.points.last
-      points[-1] = station
-      points << end_point
+    unless (@stations.include?(station))
+      @stations.insert 1, station    
     else
-      puts "Такой станции не существует, или она уже есть в списке"
+      puts "Cтанция #{station.name} уже есть в списке"
     end
   end
 
   # удаляем станцию. Проверить есть ли она в маршруте
   # не должна быть начальной или конечной
   def delete_station(station)
-    if points.include?(station) && points[0] != station && points[-1] != station
-      points.delete(station)
+    if stations.include?(station) && stations.first != station && stations.last != station
+      stations.delete(station)
     else
       puts "Такой станции нет в маршруте, или она является начальной или конечной"
     end
@@ -80,24 +65,23 @@ class Route
 
   # Выводим названия станций
   def display_stations_names
-    points.each { |point| puts point.name }
+    stations.each { |station| puts station.name }
   end
 end
 
 class Train
-
-  attr_accessor :speed, :route, :current_station
+  attr_accessor :speed, :route, :current_station_index
   attr_reader   :wagons, :type, :title
 
   def initialize(title, type, wagons)
-    @title = title.to_s
-    @type = type.to_s
+    @title = title
+    @type = type
     @wagons = wagons.to_i
     @speed = 0    
   end
 
-  def speed_up(speed_up)
-    @speed += speed_up
+  def speed_up(value)
+    @speed += value
   end
 
   def stop
@@ -108,7 +92,8 @@ class Train
   def take_route(route)
     @route = route
     # помещаем на первую станцию в маршруте
-    route.points[0].add_train(self)
+    route.stations.first.add_train(self)
+    @current_station_index = 0
   end
 
   # добавляем вагоны
@@ -124,19 +109,25 @@ class Train
     end
   end
 
+  def current_station
+    route.stations[@current_station_index]
+  end
+
   def next_station
-    unless @current_station == self.route.points.last
-      next_station_index = self.route.points.index(@current_station) + 1
-      self.route.points[next_station_index]
+    unless @current_station == self.route.stations.last
+      # В этом методе, не двигаем поезд, а просто возвращаем следующую станцию
+      # поэтому @current_station_index не меняем, он изменится в .move_next_station
+      self.route.stations[@current_station_index + 1]
     else
       puts "Вы находитесь в конечной точке маршрута"
     end    
   end
 
   def prev_station
-    unless @current_station == self.route.points.first
-      prev_station_index = self.route.points.index(@current_station) - 1
-      self.route.points[prev_station_index]
+    # Здесь также как и в .next_station, только возвращается предыдущая станция
+    # без изменения индекса @current_station_index
+    unless @current_station == self.route.stations.first
+      self.route.stations[@current_station_index - 1]
     else
       puts "Вы находитесь в начальной точке маршрута"
     end
@@ -144,12 +135,17 @@ class Train
 
   # перемещаем поезд на станцию вперёд
   def move_next_station
-    next_station.add_train(self) if next_station
+    if next_station
+      next_station.add_train(self)
+      @current_station_index += 1
+    end
   end
 
   # перемещаем поезд на станцию вперёд
   def move_prev_station
-    prev_station.add_train(self) if prev_station
+    if prev_station
+      prev_station.add_train(self)
+      @current_station_index -= 1
+    end
   end
-
 end
