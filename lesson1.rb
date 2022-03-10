@@ -7,6 +7,19 @@ Array.new(6){ |index| index + 1 }    #=> [1, 2, 3, 4, 5, 6]
 array = ["a", "b", "c", "d", "e"]
 array[1..-2]                         #=> ["b", "c", "d"]
 
+ObjectSpace.each_object(Railway).to_a
+
+railway = Railway.new
+railway.seed
+railway.menu_railway
+
+# перемещаем поезд на станцию вперёд
+def move_next_station
+  if next_station
+    next_station.add_train(self)
+    @current_station_index += 1
+  end
+end
 
 print "Integer please: "
 user_num = Integer(gets.chomp)
