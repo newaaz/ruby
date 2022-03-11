@@ -9,9 +9,22 @@ array[1..-2]                         #=> ["b", "c", "d"]
 
 ObjectSpace.each_object(Railway).to_a
 
-railway = Railway.new
-railway.seed
-railway.menu_railway
+# для рефакторинга
+@trains.each_with_index { |train, index| puts "<#{index + 1}> #{train.title}" }
+train = @trains[gets.chomp.to_i - 1]
+
+
+  # добавление вагонов
+  def add_wagon(wagon)
+    if wagon.type = :cargo
+      @wagons << CargoWagon.new
+    elsif wagon.type = :passenger
+      @wagons << PassengerWagon.new
+    else
+      puts "Вагон неопределённого типа"
+    end
+  end
+
 
 # перемещаем поезд на станцию вперёд
 def move_next_station

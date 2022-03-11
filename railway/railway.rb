@@ -165,8 +165,7 @@ class Railway
   # Назначаем маршрут поезду
   def set_route
     puts "Укажите номер поезда которому назначаем маршрут"
-    @trains.each_with_index { |train, index| puts "<#{index + 1}> #{train.title}" }
-    train = @trains[gets.chomp.to_i - 1]
+    train = select_train_from_list
     puts "Укажите номер маршрута который нужно назначить выбранному поезду"
     @routes.each_with_index { |route, index| puts "   <#{index + 1}> #{route.stations.first.name} -  #{route.stations.last.name}" }
     route = @routes[gets.chomp.to_i - 1]
@@ -176,20 +175,22 @@ class Railway
   # Добавляем/удаляем вагоны
   def wagon_management
     puts "Укажите номер поезда которому требуется добавить/удалить вагон"
-    @trains.each_with_index { |train, index| puts "<#{index + 1}> #{train.title}" }
-    train = @trains[gets.chomp.to_i - 1]
+    train = select_train_from_list
     puts "Выберите действие:
-    <1> Добавить вагон                                          \n
-    <2> Удалить вагон                                           \n
-    <3> Вернуться к выводу поездов для управления вагонами      \n
+    <1> Добавить грузовой вагон к этому поезду                  \n
+    <2> Добавить пассажирский вагон к этому поезду              \n
+    <3> Удалить вагон                                           \n
+    <4> Вернуться к выводу поездов для управления вагонами      \n
     <0> Выход в главное меню                                    \n"
     choice = gets.chomp.to_i
     case choice
     when 1
-      train.add_wagon
+      train.add_wagon(CargoWagon.new)
     when 2
-      train.remove_wagon
+      train.add_wagon(PassengerWagon.new)
     when 3
+      train.remove_wagon
+    when 4
       wagon_management
     when 0
       menu_railway
@@ -199,8 +200,7 @@ class Railway
   # Перемещение поезда
   def move_train
     puts "Укажите номер поезда которому требуется переместить"
-    @trains.each_with_index { |train, index| puts "<#{index + 1}> #{train.title}" }
-    train = @trains[gets.chomp.to_i - 1]
+    train = select_train_from_list
     puts "Выберите действие:
     <1> Переместить вперёд                              \n
     <2> Переместить назад                               \n
@@ -217,6 +217,11 @@ class Railway
     when 0
       menu_railway
     end
+  end
+
+  def select_train_from_list
+    @trains.each_with_index { |train, index| puts "<#{index + 1}> #{train.title}" }
+    train = @trains[gets.chomp.to_i - 1]
   end
 
   public

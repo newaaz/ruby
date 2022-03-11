@@ -22,7 +22,25 @@ class Train
     @current_station_index = 0
   end
 
-  # добавление вагонов в субклассах
+  # добавление вагонов
+  def add_wagon(wagon)
+    if type == wagon.type
+      attach_wagon_by_type
+    else
+      puts "Тип вагона не соответствует типу поезда"
+    end
+  end
+
+  # добвалем вагон в зависимости от типа поезда
+  def attach_wagon_by_type
+    if type == :cargo
+      @wagons << CargoWagon.new
+    elsif type == :passenger
+      @wagons << PassengerWagon.new
+    else
+      puts "Некорректный тип вагона"
+    end
+  end
 
   # отцепляем вагоны
   def remove_wagon

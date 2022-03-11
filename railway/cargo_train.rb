@@ -3,8 +3,4 @@ class CargoTrain < Train
     super
     @type = :cargo
   end  
-
-  def add_wagon
-    @wagons << CargoWagon.new
-  end
 end
