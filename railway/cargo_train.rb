@@ -1,6 +1,5 @@
 class CargoTrain < Train
-  puts "something"
-  def initialize(title)
+  def initialize(number)
     super
     @type = :cargo
   end  

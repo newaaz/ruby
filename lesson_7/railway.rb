@@ -81,7 +81,10 @@ class Railway
       @trains << PassengerTrain.new(number)
     when 0
       menu_railway
-    end   
+    end
+    rescue RuntimeError => e
+      puts "Error! #{e.message} - начните заново"
+      retry
   end
 
   # создаём маршруты

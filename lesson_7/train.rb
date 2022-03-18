@@ -1,7 +1,22 @@
+require_relative './modules/manufacturer'
+require_relative './modules/instance_counter'
+require_relative './modules/validation'
+
 class Train
   include Manufacturer
   include InstanceCounter
-  attr_reader   :number, :type, :wagons, :speed, :route, :current_station_index
+  include Validation
+  attr_reader :number, :type, :wagons, :speed, :route, :current_station_index
+
+  NUMBER_FORMAT = /^[a-z\d]{3}-?[a-z\d]{2}$/i
+
+  # потом убрать
+  attr_writer :number 
+
+  # validation go
+  validate :number, :presence
+  validate :number, :length, 5
+  validate :number, :format, NUMBER_FORMAT
 
   @@all_trains = {}
 
@@ -11,12 +26,13 @@ class Train
     end
   end
 
-  def initialize(number)
-    @number = number
+  def initialize(number)    
+    @number = number    
     @wagons = []
     @speed = 0
     @@all_trains[number] = self
     register_instance
+    validate!
   end
 
   def speed_up(value)
