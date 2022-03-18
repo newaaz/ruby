@@ -19,6 +19,8 @@ module Validation
       false
     end
 
+    protected
+
     def validate! 
       self.class.instance_variable_get("@validates").each do |validate|
         name = validate[:inst_var]
@@ -26,7 +28,6 @@ module Validation
         arg = validate[:arg][0]
         send "validate_#{validate[:type_validation]}", name, value, arg
       end
-
     end
 
     def validate_presence(name, value, _)

@@ -10,10 +10,6 @@ class Train
 
   NUMBER_FORMAT = /^[a-z\d]{3}-?[a-z\d]{2}$/i
 
-  # потом убрать
-  attr_writer :number 
-
-  # validation go
   validate :number, :presence
   validate :number, :length, 5
   validate :number, :format, NUMBER_FORMAT
@@ -54,8 +50,6 @@ class Train
   def add_wagon(wagon)
     if type == wagon.type
       attach_wagon_by_type(wagon)
-    else
-      puts "Тип вагона не соответствует типу поезда"
     end
   end
 
@@ -65,8 +59,6 @@ class Train
       @wagons << wagon
     elsif type == :passenger
       @wagons << wagon
-    else
-      puts "Некорректный тип вагона"
     end
   end
 
@@ -76,24 +68,18 @@ class Train
       @wagons.each_with_index { |wagon, index| "Вагон № #{index - 1}" }
       puts "Введите номер удаляемого вагона"
       @wagons.delete @wagon[gets.chomp.to_i - 1] if @speed == 0
-    else
-      puts "Состав уже пустой"
     end
   end  
 
   def next_station
     unless @current_station == self.route.stations.last      
       self.route.stations[@current_station_index + 1]
-    else
-      puts "Вы находитесь в конечной точке маршрута"
     end    
   end
 
   def prev_station    
     unless @current_station == self.route.stations.first
       self.route.stations[@current_station_index - 1]
-    else
-      puts "Вы находитесь в начальной точке маршрута"
     end
   end
 
@@ -103,8 +89,6 @@ class Train
       route.stations[@current_station_index].send_train
       next_station.add_train(self)
       @current_station_index += 1
-    else
-      puts "Вы находитесь в конечной точке маршрута"
     end
   end
 
@@ -114,8 +98,6 @@ class Train
       route.stations[@current_station_index].send_train
       prev_station.add_train(self)
       @current_station_index -= 1
-    else
-      puts "Вы находитесь в начальной точке маршрута"
     end
   end
 

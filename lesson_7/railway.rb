@@ -82,9 +82,16 @@ class Railway
     when 0
       menu_railway
     end
+    report_of_create(number)
     rescue RuntimeError => e
       puts "Error! #{e.message} - начните заново"
       retry
+  end
+
+  # отчёт об успешном создании поезда
+  def report_of_create(number)
+    train = Train.find(number)
+    puts "Поезд №-#{train.number} успешно создан"
   end
 
   # создаём маршруты
@@ -238,10 +245,10 @@ class Railway
     @stations << Station.new("SPB")
     @stations << Station.new("Kursk")
     @stations << Station.new("Ivanovo")
-    @trains << CargoTrain.new("Feo-Bel #324")
-    @trains << CargoTrain.new("Ivn-Bel #114")
-    @trains << PassengerTrain.new("Feo-Mos #457")    
-    @trains << PassengerTrain.new("Krs-SPB #277")
+    @trains << CargoTrain.new("Feoel")
+    @trains << CargoTrain.new("Ivnel")
+    @trains << PassengerTrain.new("FeoMs")    
+    @trains << PassengerTrain.new("KrsSB")
     @routes << Route.new(@stations[0], @stations[2])
     @routes << Route.new(@stations[1], @stations[5])
     @routes << Route.new(@stations[2], @stations[3])
