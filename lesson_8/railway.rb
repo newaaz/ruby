@@ -223,7 +223,7 @@ class Railway
       added_area = gets.chomp.to_i
       wagon.fill_area(added_area) if wagon.free_area > added_area
     elsif wagon.type == :passenger
-      wagon.fill_area(1) if wagon.free_area > 0
+      wagon.fill_area if wagon.free_area >= 1
     end
   end
 

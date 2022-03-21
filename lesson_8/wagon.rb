@@ -8,7 +8,7 @@ class Wagon
   end
 
   def fill_area(value)
-    @filled_area += value if free_area > 0
+    @filled_area += value if free_area >= value
   end
 
   def free_area
