@@ -65,9 +65,9 @@ class Railway
     puts "Введите название поезда о котором хотите узнать подробнее"    
     train = Train.find gets.chomp
     if train.type == :cargo
-      train.each_wagon_with_index { |wagon, index| puts "Вагон № #{index + 1} | #{wagon.type} | Доступный объём #{wagon.free_volume} из #{wagon.volume}" }
+      train.each_wagon_with_index { |wagon, index| puts "Вагон № #{index + 1} | #{wagon.type} | Доступный объём #{wagon.free_area} из #{wagon.area}" }
     elsif train.type == :passenger
-      train.each_wagon_with_index { |wagon, index| puts "Вагон № #{index + 1} | #{wagon.type} | Доступно мест #{wagon.free_places} из #{wagon.places}" }
+      train.each_wagon_with_index { |wagon, index| puts "Вагон № #{index + 1} | #{wagon.type} | Доступно мест #{wagon.free_area} из #{wagon.area}" }
     end
   end
 
@@ -89,9 +89,9 @@ class Railway
       menu_railway
     end
     report_of_create(number)
-    rescue RuntimeError => e
-      puts "Error! #{e.message} - начните заново"
-      retry
+  rescue RuntimeError => e
+    puts "Error! #{e.message} - начните заново"
+    retry
   end
 
   # отчёт об успешном создании поезда
@@ -192,76 +192,51 @@ class Railway
   def wagon_management
     puts "Укажите номер поезда которому требуется добавить/удалить вагон продать билет или заполнить грузом"
     train = select_train_from_list
-    if train.type == :cargo
-      puts "Выберите действие для грузового поезда:                     \n
-            <1> Добавить вагон к поезду                                 \n
-            <2> Удалить вагон                                           \n
-            <3> Наполнить грузом                                        \n
-            <4> Вернуться к выводу поездов для управления вагонами      \n
-            <0> Выход в главное меню                                    \n"
-      choice = gets.chomp.to_i
-      case choice
-      when 1      
-        add_cargo_wagon_for(train)      
-      when 2
-        train.remove_wagon
-      when 3
-        fill_cargo_wagon(train)
-      when 4
-        wagon_management
-      when 0
-        menu_railway
-      end
-    elsif train.type == :passenger
-      puts "Выберите действие для пассажирского поезда:                 \n
-            <1> Добавить вагон к поезду                                 \n
-            <2> Удалить вагон                                           \n
-            <3> Продать билет                                           \n
-            <4> Вернуться к выводу поездов для управления вагонами      \n
-            <0> Выход в главное меню                                    \n"
-      choice = gets.chomp.to_i
-      case choice
-      when 1      
-        add_passenger_wagon_for(train)     
-      when 2
-        train.remove_wagon
-      when 3
-        fill_passenger_wagon(train)
-      when 4
-        wagon_management
-      when 0
-        menu_railway
-      end
+    puts "Выберите действие для грузового поезда:                     \n
+          <1> Добавить вагон к поезду                                 \n
+          <2> Удалить вагон                                           \n
+          <3> Заполнить грузом / Продать билет                        \n
+          <4> Вернуться к выводу поездов для управления вагонами      \n
+          <0> Выход в главное меню                                    \n"
+    choice = gets.chomp.to_i
+    case choice
+    when 1      
+      add_wagon_for(train)      
+    when 2
+      train.remove_wagon
+    when 3
+      fill_wagon(train)
+    when 4
+      wagon_management
+    when 0
+      menu_railway
+    end
+
+  end
+
+  def fill_wagon(train)
+    train.each_wagon_with_index { |wagon, index| puts "Вагон № #{index + 1} | #{wagon.type} | Доступно мест #{wagon.free_area} из #{wagon.area}" }
+    puts "Выберите № вагона для заполнения"
+    wagon = train.wagons[gets.chomp.to_i - 1]
+    if wagon.type == :cargo
+      puts "Введите количество добавляемого объёма груза"
+      added_area = gets.chomp.to_i
+      wagon.fill_area(added_area) if wagon.free_area > added_area
+    elsif wagon.type == :passenger
+      wagon.fill_area(1) if wagon.free_area > 0
     end
   end
 
-  def fill_passenger_wagon(train)    
-    train.each_wagon_with_index { |wagon, index| puts "Вагон № #{index + 1} | #{wagon.type} | Доступно мест #{wagon.free_places} из #{wagon.places}" }
-    puts "Выберите № вагона для продажи билета"
-    wagon = train.wagons[gets.chomp.to_i - 1]
-    wagon.sell_ticket if wagon.free_places > 0
-  end
-
-  def fill_cargo_wagon(train)
-    train.each_wagon_with_index { |wagon, index| puts "Вагон № #{index + 1} | Доступный объём #{wagon.free_volume} из #{wagon.volume}" }
-    puts "Выберите № вагона для заполнения груза"
-    wagon = train.wagons[gets.chomp.to_i - 1]
-    puts "Введите количество добавляемого объёма груза"
-    added_volume = gets.chomp.to_i
-    wagon.fill_volume(added_volume) if wagon.free_volume > added_volume 
-  end
-
-  def add_cargo_wagon_for(train)
-    puts "Введите грузовой объём этого вагона в куб.м."
-    volume = gets.to_i
-    wagon = CargoWagon.new volume
-    train.add_wagon wagon
-  end
-
-  def add_passenger_wagon_for(train)
-    puts "Введите количество мест в этом вагоне"
-    places = gets.to_i
-    wagon = PassengerWagon.new places
+  def add_wagon_for(train)
+    if train.type = :cargo
+      puts "Введите грузовой объём этого вагона в куб.м."
+      area = gets.to_i
+      wagon = CargoWagon.new area
+    elsif train.type == :passenger
+      puts "Введите количество мест в этом вагоне"
+      area = gets.to_i
+      wagon = PassengerWagon.new area
+    end
     train.add_wagon wagon
   end
 
