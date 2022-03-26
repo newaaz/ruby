@@ -9,7 +9,7 @@ class Train
   include Manufacturer
   include InstanceCounter
   include Validation
-  extend Accessors
+  include Accessors
   attr_reader :number, :type, :wagons, :speed, :route, :current_station_index
 
   attr_accessor_with_history :tickets, :passengers
