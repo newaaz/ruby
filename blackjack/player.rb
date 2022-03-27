@@ -19,6 +19,10 @@ class Player
     @cards = []
   end
 
+  def reset_deposit
+    @money = 0
+  end
+
   def put_to_deposit(money)
     @money += money
   end
